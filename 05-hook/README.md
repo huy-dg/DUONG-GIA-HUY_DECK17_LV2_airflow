@@ -80,4 +80,4 @@ select * from users;
 
 ## Kết luận
 
-Chúc mừng bạn, vậy là sau phần này bạn đã tạo và chạy thành công 1 data pipline trên `airflow`.
+Chúc mừng bạn, vậy là sau phần này bạn đã tạo và chạy thành công 1 data pipeline trên `airflow`.
