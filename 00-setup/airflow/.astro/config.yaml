@@ -1,0 +1,4 @@
+project:
+    name: airflow
+webserver:
+    port: "8280"
