@@ -14,7 +14,7 @@ Thêm vào trong phần `airflow.connections` thông tin http connection như sa
 ```
 - conn_id: user_api
   conn_type: http
-  conn_host: https://randomuser.me/
+  conn_host: https://dummyjson.com/
   conn_schema:
   conn_login:
   conn_password:

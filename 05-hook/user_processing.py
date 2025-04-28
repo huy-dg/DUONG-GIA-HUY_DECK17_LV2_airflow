@@ -12,13 +12,14 @@ from pandas import json_normalize
 
 def _process_user(ti):
     user = ti.xcom_pull(task_ids="extract_user")
-    user = user['results'][0]
+    user = user['users'][0]
     processed_user = json_normalize({
-        'firstname': user['name']['first'],
-        'lastname': user['name']['last'],
-        'country': user['location']['country'],
-        'username': user['login']['username'],
-        'password': user['login']['password'],
+        'id': user['id'],
+        'firstname': user['firstName'],
+        'lastname': user['lastName'],
+        'country': user['address']['country'],
+        'username': user['username'],
+        'password': user['password'],
         'email': user['email']
     })
     processed_user.to_csv('/tmp/processed_user.csv', index=False, header=False)
@@ -40,13 +41,13 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
     is_api_available = HttpSensor(
         task_id='is_api_available',
         http_conn_id='user_api',
-        endpoint='api/'
+        endpoint='users?limit=10'
     )
 
     extract_user = HttpOperator(
         task_id='extract_user',
         http_conn_id='user_api',
-        endpoint='api/',
+        endpoint='users?limit=10',
         method='GET',
         response_filter=lambda response: json.loads(response.text),
         log_response=True
@@ -63,6 +64,7 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
         database='postgres',
         sql='''
         CREATE TABLE IF NOT EXISTS users (
+            id BIGINT NOT NULL,
             firstname TEXT NOT NULL,
             lastname TEXT NOT NULL,
             country TEXT NOT NULL,

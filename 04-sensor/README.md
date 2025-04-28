@@ -14,7 +14,7 @@ Tiếp theo bạn ghi đè (overwrite) file này vào trong thư mục `dags` v�
 Chúng ta thấy dag vẫn sẽ chạy đúng và ghi kết quả ra file `.csv` giống như trong phần trước. Bới vì endpoint `api/` set
 trong `HttpSensor` đang hợp lệ.
 
-Bây giờ bạn hãy thử đổi endpoint `api/` thành endpoint không hợp lệ (vd: `api1/`) trong `HttpSensor`. Sau đó quan sát sự
+Bây giờ bạn hãy thử đổi endpoint `users` thành endpoint không hợp lệ (vd: `users1`) trong `HttpSensor`. Sau đó quan sát sự
 thay đổi trên giao diện web. Bạn sẽ thấy `HttpSensor` sẽ ở trạng thái `running` vì nó liên tục check xem endpoint có
 available không. Và các task phía sau như `extract_user` và `process_user` sẽ không được chạy.
 

@@ -36,13 +36,9 @@ cat /tmp/processed_user.csv
 
 Kết quả như sau:
 
-```csv
-Nadia,Lucas,Switzerland,yellowelephant443,dirty1,nadia.lucas@example.com
-```
+![](img/processed_user.png)
 
 ## 3. Yêu cầu
-
-Thay endpoint `api/` thành `api/?results=50` để response trả về danh sách gồm 50 users.
 
 Sửa hàm `_process_user` để xử lý toàn bộ danh sách users trả về thay vì chỉ xử lý user đầu tiên.
 
