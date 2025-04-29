@@ -60,7 +60,7 @@ def _store_user():
     )
 
 
-with (DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='@daily', catchup=False) as dag):
+with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='@daily', catchup=False) as dag:
     is_api_available = HttpSensor(
         task_id='is_api_available',
         http_conn_id='user_api',
@@ -109,5 +109,4 @@ with (DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval=
         python_callable=_store_user
     )
 
-    is_api_available >> extract_user >> is_valid_user >> [skip_user, process_user]
-    process_user >> create_table >> store_user
+    is_api_available >> extract_user >> is_valid_user >> [skip_user, process_user] >> create_table >> store_user
