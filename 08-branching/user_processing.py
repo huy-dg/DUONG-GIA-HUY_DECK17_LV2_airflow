@@ -5,6 +5,7 @@ import requests
 from airflow import DAG
 from airflow.hooks.base import BaseHook
 from airflow.models import TaskInstance
+from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.providers.http.sensors.http import HttpSensor
@@ -77,9 +78,8 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
         python_callable=_is_valid_user
     )
 
-    skip_user = PythonOperator(
-        task_id='skip_user',
-        python_callable=_skip_user
+    skip_user = EmptyOperator(
+        task_id='skip_user'
     )
 
     process_user = PythonOperator(
@@ -109,4 +109,5 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
         python_callable=_store_user
     )
 
-    is_api_available >> extract_user >> is_valid_user >> [skip_user, process_user] >> create_table >> store_user
+    is_api_available >> extract_user >> is_valid_user >> [skip_user, process_user]
+    process_user >> create_table >> store_user
