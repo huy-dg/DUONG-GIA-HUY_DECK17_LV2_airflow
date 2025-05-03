@@ -12,17 +12,17 @@ from airflow.utils.task_group import TaskGroup
 from pandas import json_normalize
 
 
-def _extract_user(ti: TaskInstance, page_no=1):
+def _extract_user(ti: TaskInstance, page=1):
     conn = BaseHook.get_connection('user_api')
-    res = requests.get(conn.host + f'users?limit={page_size}&skip={(page_no - 1) * page_size}')
+    res = requests.get(conn.host + f'users?limit={page_size}&skip={(page - 1) * page_size}')
     res = res.json()
     print(res)
     users = res['users']
     ti.xcom_push(key='users', value=users)
 
 
-def _process_user(ti, page_no: int):
-    users = ti.xcom_pull(task_ids=f"user_processing_tg_{page_no}.extract_user", key='users')
+def _process_user(ti, page=1):
+    users = ti.xcom_pull(task_ids="extract_user", key='users')
     processed_users = [{
         'id': user['id'],
         'firstname': user['firstName'],
@@ -37,10 +37,10 @@ def _process_user(ti, page_no: int):
 
     processed_users = json_normalize(processed_users)
 
-    processed_users.to_csv(f'/tmp/processed_user_{page_no}.csv', index=False, header=False)
+    processed_users.to_csv(f'/tmp/processed_user_{page}.csv', index=False, header=False)
 
 
-def _store_user(page_no=1):
+def _store_user(page=1):
     hook = PostgresHook(
         postgres_conn_id='postgres',
         database='postgres'
@@ -48,7 +48,7 @@ def _store_user(page_no=1):
 
     hook.copy_expert(
         sql="COPY users FROM stdin WITH DELIMITER as ','",
-        filename=f'/tmp/processed_user_{page_no}.csv'
+        filename=f'/tmp/processed_user_{page}.csv'
     )
 
 
@@ -72,14 +72,12 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
         with TaskGroup(group_id=f'user_processing_tg_{page}') as user_processing_tg:
             extract_user = PythonOperator(
                 task_id='extract_user',
-                python_callable=_extract_user,
-                op_kwargs={'page_no': page}
+                python_callable=_extract_user
             )
 
             process_user = PythonOperator(
                 task_id='process_user',
-                python_callable=_process_user,
-                op_kwargs={'page_no': page}
+                python_callable=_process_user
             )
 
             extract_user >> process_user
@@ -110,8 +108,7 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
         with TaskGroup(group_id=f'user_storing_tg_{page}') as user_storing_tg:
             store_user = PythonOperator(
                 task_id='store_user',
-                python_callable=_store_user,
-                op_kwargs={'page_no': page}
+                python_callable=_store_user
             )
 
             user_storing_task_groups.append(user_storing_tg)

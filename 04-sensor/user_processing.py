@@ -27,7 +27,9 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
     is_api_available = HttpSensor(
         task_id='is_api_available',
         http_conn_id='user_api',
-        endpoint='users?limit=10'
+        endpoint='users?limit=10',
+        timeout=60,
+        poke_interval=20
     )
 
     extract_user = HttpOperator(
