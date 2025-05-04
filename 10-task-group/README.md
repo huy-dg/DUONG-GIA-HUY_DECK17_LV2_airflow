@@ -11,13 +11,13 @@ Chúng ta sẽ sửa lại dag `user_processing` để giải quyết các yêu 
 - Với mỗi page sẽ xử lý và lưu xuống 1 file `.csv`
 - Load các file `.csv` đã tạo vào bảng `users`
 
-## 3. Khai báo và bật dag trên giao diện
+## 2. Khai báo và bật dag trên giao diện
 
 Ghi đè (overwrite) file `user_processing.py` vào trong thư mục `dags`. Tiếp theo, bật dag này trên giao diện web.
 
 Thực hiện chạy dag trên giao diện.
-
-## 4. Kiểm tra kết quả
+    
+## 3. Kiểm tra kết quả
 
 Bạn sẽ thấy dag mới có giao diện graph như sau:
 
@@ -34,7 +34,7 @@ Kết quả trong bảng `users` cũng cho thấy dữ liệu được insert đ
 
 ![](img/users_table.png)
 
-## 5. Yêu cầu
+## 4. Yêu cầu
 
 Sử dụng kỹ thuật `task_group` và `datasets`, hãy tách dag `user_processing` trong phần trên thành 2 dags riêng
 biệt `user_processing` và `user_storing` (như trong bài [09-datasets](../09-datasets)) để xử lý dữ liệu trên 3 pages của
