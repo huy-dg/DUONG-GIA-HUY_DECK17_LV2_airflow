@@ -4,29 +4,23 @@ Trong phần này, chúng ta sẽ sử dụng `PostgresHook` để load data tro
 
 ## 1. Tạo postgres connection
 
-Đầu tiên, bạn khai báo connection của db postgres lên airflow như sau:
 
-Thêm vào trong phần `airflow.connections` của file [airflow_settings.yaml](../00-setup/airflow/airflow_settings.yaml)
-thông tin connection như sau:
+Truy cập vào web interface mục `Admin > Connections` chọn `Add a new record`:
+
+Bạn khai báo connection của db postgres như sau:
 
 ```
 - conn_id: postgres
   conn_type: postgres
   conn_host: postgres
   conn_schema:
-  conn_login: postgres
-  conn_password: postgres
+  conn_login: airflow
+  conn_password: airflow
   conn_port: 5432
   conn_extra:
 ```
 
-Restart lại `airflow` để load lại thông tin `connection` mới.
-
-```
-astro dev restart
-```
-
-Truy cập vào web interface mục `Admin > Connections` sẽ có kết quả như sau:
+Kết quả như sau:
 
 ![](img/postgres-connection.png)
 
@@ -61,13 +55,13 @@ Exec vào trong `postgres` container
 **Lưu ý: ** thay tên container bằng container trên máy của bạn
 
 ```
-docker exec -ti airflow_416719-postgres-1 bash
+docker exec -ti airflow-postgres-1 bash
 ```
 
 Tiếp theo, connect db sử dụng `psql`
 
 ```
-psql -U postgres -d postgres
+psql -U airflow -d airflow
 ```
 
 Truy vấn bảng users

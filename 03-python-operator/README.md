@@ -25,7 +25,7 @@ Exec vào trong `airflow-scheduler` container
 **Lưu ý:** thay container's name bằng container tương ứng trên máy của bạn.
 
 ```
-docker exec -ti airflow_416719-scheduler-1 bash
+docker exec -ti airflow-airflow-worker-1 bash
 ```
 
 Xem nội dung file `.csv`

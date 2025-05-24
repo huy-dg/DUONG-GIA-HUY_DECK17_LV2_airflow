@@ -37,7 +37,7 @@ def _process_user(ti):
 def _store_user():
     hook = PostgresHook(
         postgres_conn_id='postgres',
-        database='postgres'
+        database='airflow'
     )
 
     hook.copy_expert(
@@ -68,7 +68,7 @@ with DAG('user_processing', start_date=datetime(2025, 1, 1), schedule_interval='
     create_table = SQLExecuteQueryOperator(
         task_id='create_table',
         conn_id='postgres',
-        database='postgres',
+        database='airflow',
         sql='''
         CREATE TABLE IF NOT EXISTS users (
             id BIGINT NOT NULL,

@@ -63,7 +63,7 @@ def user_processing():
     create_table = SQLExecuteQueryOperator(
         task_id='create_table',
         conn_id='postgres',
-        database='postgres',
+        database='airflow',
         sql='''
         DROP TABLE IF EXISTS users;
         CREATE TABLE IF NOT EXISTS users (
@@ -84,7 +84,7 @@ def user_processing():
     def store_user(page_no=1):
         hook = PostgresHook(
             postgres_conn_id='postgres',
-            database='postgres'
+            database='airflow'
         )
 
         hook.copy_expert(

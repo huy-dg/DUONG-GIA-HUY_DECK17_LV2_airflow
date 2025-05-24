@@ -12,7 +12,7 @@ csv_ds = Dataset(uri='/tmp/processed_user.csv')
 def _store_user():
     hook = PostgresHook(
         postgres_conn_id='postgres',
-        database='postgres'
+        database='airflow'
     )
 
     hook.copy_expert(
@@ -25,7 +25,7 @@ with DAG('user_storing', schedule=[csv_ds], start_date=datetime(2025, 1, 1), cat
     create_table = SQLExecuteQueryOperator(
         task_id='create_table',
         conn_id='postgres',
-        database='postgres',
+        database='airflow',
         sql='''
         DROP TABLE IF EXISTS users;
         CREATE TABLE IF NOT EXISTS users (

@@ -7,9 +7,9 @@ Phần hướng dẫn này bao gồm:
 
 ## 1. Tạo http connection
 
-Thêm connection vào trong file [airflow_settings.yaml](../00-setup/airflow/airflow_settings.yaml).
+Truy cập vào web interface mục `Admin > Connections` chọn `Add a new record`:
 
-Thêm vào trong phần `airflow.connections` thông tin http connection như sau:
+Điền thông tin http connection như sau:
 
 ```
 - conn_id: user_api
@@ -22,13 +22,7 @@ Thêm vào trong phần `airflow.connections` thông tin http connection như sa
   conn_extra:
 ```
 
-Restart lại `airflow` để load lại thông tin `connection` mới.
-
-```
-astro dev restart
-```
-
-Truy cập vào web interface mục `Admin > Connections` sẽ có kết quả như sau:
+Kết quả thu được như sau:
 
 ![](img/http-connection.png)
 
