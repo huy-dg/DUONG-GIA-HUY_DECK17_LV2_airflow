@@ -2,10 +2,17 @@
 
 Hướng dẫn này giúp bạn cài đặt Airflow bằng Docker
 
-## 1. Create network
+## 1. Create network & Build docker image
+**Create network**
 
 ```shell
 docker network create streaming-network --driver bridge
+```
+
+**Build custom docker image**
+
+```
+docker build -t unigap/airflow:2.10.4 .
 ```
 
 ## 2. Initializing Environment
