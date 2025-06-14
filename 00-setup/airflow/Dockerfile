@@ -10,12 +10,13 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+# RUN echo JAVA_HOME=$([[ -d /usr/lib/jvm/java-17-openjdk-amd64 ]] && echo /usr/lib/jvm/java-17-openjdk-amd64 || [[ -d /usr/lib/jvm/java-17-openjdk-arm64 ]] && echo /usr/lib/jvm/java-17-openjdk-arm64 || echo "") >> /etc/environment
+
 USER airflow
 
-# Set JAVA_HOME
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-#RUN export JAVA_HOME
+# ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
+# USER airflow
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
