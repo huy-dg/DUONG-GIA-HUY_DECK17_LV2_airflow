@@ -1,0 +1,21 @@
+[2026-01-08T09:04:39.756+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-01-08T09:04:39.849+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: user_processing_branch.is_valid_user scheduled__2026-01-07T00:00:00+00:00 [queued]>
+[2026-01-08T09:04:39.909+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: user_processing_branch.is_valid_user scheduled__2026-01-07T00:00:00+00:00 [queued]>
+[2026-01-08T09:04:39.911+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 1
+[2026-01-08T09:04:41.647+0000] {taskinstance.py:2889} INFO - Executing <Task(BranchPythonOperator): is_valid_user> on 2026-01-07 00:00:00+00:00
+[2026-01-08T09:04:41.668+0000] {standard_task_runner.py:72} INFO - Started process 12322 to run task
+[2026-01-08T09:04:41.677+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'user_processing_branch', 'is_valid_user', 'scheduled__2026-01-07T00:00:00+00:00', '--job-id', '82', '--raw', '--subdir', 'DAGS_FOLDER/user_processing_branching.py', '--cfg-path', '/tmp/tmp7sqdh51y']
+[2026-01-08T09:04:41.690+0000] {standard_task_runner.py:105} INFO - Job 82: Subtask is_valid_user
+[2026-01-08T09:04:41.910+0000] {task_command.py:467} INFO - Running <TaskInstance: user_processing_branch.is_valid_user scheduled__2026-01-07T00:00:00+00:00 [running]> on host 91260714fecb
+[2026-01-08T09:04:42.202+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='user_processing_branch' AIRFLOW_CTX_TASK_ID='is_valid_user' AIRFLOW_CTX_EXECUTION_DATE='2026-01-07T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-01-07T00:00:00+00:00'
+[2026-01-08T09:04:42.206+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-01-08T09:04:42.258+0000] {baseoperator.py:421} WARNING - BranchPythonOperator.execute cannot be called outside TaskInstance!
+[2026-01-08T09:04:42.283+0000] {python.py:240} INFO - Done. Returned value was: process_user
+[2026-01-08T09:04:42.284+0000] {branch.py:38} INFO - Branch into process_user
+[2026-01-08T09:04:42.285+0000] {skipmixin.py:230} INFO - Following branch ('process_user',)
+[2026-01-08T09:04:42.319+0000] {skipmixin.py:278} INFO - Skipping tasks [('skip_user', -1)]
+[2026-01-08T09:04:42.466+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-01-08T09:04:42.467+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=user_processing_branch, task_id=is_valid_user, run_id=scheduled__2026-01-07T00:00:00+00:00, execution_date=20260107T000000, start_date=20260108T090439, end_date=20260108T090442
+[2026-01-08T09:04:42.528+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-01-08T09:04:42.624+0000] {taskinstance.py:3895} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-01-08T09:04:42.678+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

@@ -1,0 +1,46 @@
+[2026-01-08T11:50:12.041+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2026-01-08T11:50:12.074+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: tg_store_users.create_table dataset_triggered__2026-01-08T11:50:10.364414+00:00 [queued]>
+[2026-01-08T11:50:12.086+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: tg_store_users.create_table dataset_triggered__2026-01-08T11:50:10.364414+00:00 [queued]>
+[2026-01-08T11:50:12.086+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 1
+[2026-01-08T11:50:12.366+0000] {taskinstance.py:2889} INFO - Executing <Task(SQLExecuteQueryOperator): create_table> on 2026-01-08 11:50:10.364414+00:00
+[2026-01-08T11:50:12.378+0000] {standard_task_runner.py:72} INFO - Started process 14445 to run task
+[2026-01-08T11:50:12.384+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'tg_store_users', 'create_table', 'dataset_triggered__2026-01-08T11:50:10.364414+00:00', '--job-id', '121', '--raw', '--subdir', 'DAGS_FOLDER/tg_store_users.py', '--cfg-path', '/tmp/tmpenktolug']
+[2026-01-08T11:50:12.390+0000] {standard_task_runner.py:105} INFO - Job 121: Subtask create_table
+[2026-01-08T11:50:12.462+0000] {task_command.py:467} INFO - Running <TaskInstance: tg_store_users.create_table dataset_triggered__2026-01-08T11:50:10.364414+00:00 [running]> on host 91260714fecb
+[2026-01-08T11:50:12.589+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='tg_store_users' AIRFLOW_CTX_TASK_ID='create_table' AIRFLOW_CTX_EXECUTION_DATE='2026-01-08T11:50:10.364414+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='dataset_triggered__2026-01-08T11:50:10.364414+00:00'
+[2026-01-08T11:50:12.591+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2026-01-08T11:50:12.623+0000] {sql.py:278} INFO - Executing: 
+        DROP TABLE IF EXISTS users;
+        CREATE TABLE IF NOT EXISTS users (
+            id BIGINT NOT NULL,
+            firstname TEXT NOT NULL,
+            lastname TEXT NOT NULL,
+            country TEXT NOT NULL,
+            username TEXT NOT NULL,
+            password TEXT NOT NULL,
+            email TEXT NOT NULL,
+            age INTEGER NOT NULL,
+            gender TEXT NOT NULL
+        );
+        
+[2026-01-08T11:50:12.638+0000] {base.py:84} INFO - Retrieving connection 'postgres'
+[2026-01-08T11:50:12.650+0000] {base.py:84} INFO - Retrieving connection 'postgres'
+[2026-01-08T11:50:12.655+0000] {sql.py:553} INFO - Running statement: 
+        DROP TABLE IF EXISTS users;
+        CREATE TABLE IF NOT EXISTS users (
+            id BIGINT NOT NULL,
+            firstname TEXT NOT NULL,
+            lastname TEXT NOT NULL,
+            country TEXT NOT NULL,
+            username TEXT NOT NULL,
+            password TEXT NOT NULL,
+            email TEXT NOT NULL,
+            age INTEGER NOT NULL,
+            gender TEXT NOT NULL
+        );
+        , parameters: None
+[2026-01-08T11:50:12.682+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2026-01-08T11:50:12.682+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=tg_store_users, task_id=create_table, run_id=dataset_triggered__2026-01-08T11:50:10.364414+00:00, execution_date=20260108T115010, start_date=20260108T115012, end_date=20260108T115012
+[2026-01-08T11:50:12.722+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2026-01-08T11:50:12.754+0000] {taskinstance.py:3895} INFO - 3 downstream tasks scheduled from follow-on schedule check
+[2026-01-08T11:50:12.757+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
