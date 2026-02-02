@@ -7,3 +7,4 @@ elasticsearch
 psycopg[binary]
 pyspark==3.5.1
 apache-airflow-providers-apache-spark==5.2.1
+confluent-kafka

@@ -1,1 +1,6 @@
 .env
+check.py
+**/__pycache__
+*.pyc
+**/logs/
+*.log
