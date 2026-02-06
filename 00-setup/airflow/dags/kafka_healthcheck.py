@@ -6,9 +6,11 @@ from airflow.decorators import dag, task
 from airflow.hooks.base import BaseHook
 from airflow.providers.apache.kafka.hooks.client import KafkaAdminClientHook
 from airflow.providers.apache.kafka.hooks.consume import KafkaConsumerHook
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.exceptions import AirflowException, AirflowSkipException
 from confluent_kafka import TopicPartition, ConsumerGroupTopicPartitions
 from confluent_kafka.admin import OffsetSpec
+from include.on_failure_callback import trigger_alert_on_failure
 
 KAFKA_CONN_ID = "kafka_default"
 TARGET_TOPIC = "product_view"
@@ -21,6 +23,7 @@ THROUGHPUT_THRESHOLD = 1500
     dag_id="Kafka_healthcheck",
     start_date=datetime(2025, 1, 1),
     schedule_interval="@daily",
+    on_failure_callback=trigger_alert_on_failure,
     catchup=False,
     tags=["kafka", "healthcheck"],
 )
@@ -128,6 +131,8 @@ def kafka_healthcheck():
             "partition_metadata": partition_metadata,
         }
 
+    _retrieve_metadata = retrieve_metadata()
+
     @task(task_id="metrics_task")
     def calculate_metrics(topic_metadata) -> dict:
         """
@@ -185,6 +190,8 @@ def kafka_healthcheck():
             "metric_task_ts": task_timestamp,
         }
 
+    _calculate_metrics = calculate_metrics(_retrieve_metadata)
+
     @task(task_id="msg_throughput_task")
     def calculate_throughput(current_metrics, **context) -> dict[str, float]:
         ti = context["ti"]
@@ -217,10 +224,12 @@ def kafka_healthcheck():
 
         return {"throughput_rate": throughput}
 
+    _calculate_throughput = calculate_throughput(_calculate_metrics)
+
     @task(task_id="healthcheck_task")
     def threshold_check(metrics, throughput):
         current_total_lag = metrics["total_lag"]
-        partition_metrics = metrics["partition_metrics"]
+        # partition_metrics = metrics["partition_metrics"]
         current_throughput = throughput["throughput_rate"]
         consumer_group_id = metrics["monitor_group_id"]
         alert_messages = []
@@ -243,54 +252,36 @@ def kafka_healthcheck():
         else:
             recovery_period = "N/A"
 
-        return {
-            "topic_name": TARGET_TOPIC,
-            "monitor_group_id": consumer_group_id,
-            "current_lag": current_total_lag,
-            "current_throughput": current_throughput,
-            "estimated_recovery_time_min": recovery_period,
-            "alert_messages": alert_messages,
-            "partition_metrics": partition_metrics,
-        }
-
-    @task(
-        task_id="alert_task",
-        retries=3,
-        retry_delay=timedelta(minutes=1),
-        retry_exponential_backoff=True,
-        max_retry_delay=timedelta(minutes=10),
-    )
-    def telegram_alert(alert_payload):
         message = (
-            f"🚨 *KAFKA HEALTHCHECK ALERT* 🚨\n"
+            f"📦 *Topic:* `{TARGET_TOPIC}`\n"
+            f"👥 *Consumer Group:* `{consumer_group_id}`\n"
+            f"📉 *Current Lag:* `{current_total_lag:,.0f}`\n"
+            f"🚀 *Throughput:* `{current_throughput:.2f} msg/s`\n"
+            f"⏳ *Est. Recovery:* `{recovery_period} mins`\n"
             f"----------------------------\n"
-            f"📦 *Topic:* `{alert_payload['topic_name']}`\n"
-            f"👥 *Consumer Group:* `{alert_payload['monitor_group_id']}`\n"
-            f"📉 *Current Lag:* `{alert_payload['current_lag']:,.0f}`\n"
-            f"🚀 *Throughput:* `{alert_payload['current_throughput']:.2f} msg/s`\n"
-            f"⏳ *Est. Recovery:* `{alert_payload['estimated_recovery_time_min']} mins`\n"
-            f"----------------------------\n"
-            f"❌ *Issue Detected:*\n{alert_payload['alert_messages']}"
+            f"❌ *Issue Detected:*\n{alert_messages}"
         )
-        conn = BaseHook.get_connection("telegram_bot")
-        payload = conn.get_extra_dejson()
-        payload.update({"text": message})
-        response = requests.post(
-            url=conn.host + "bot" + conn.password + "/sendMessage",
-            json=payload,
-            timeout=10,
-        )
-        response.raise_for_status()
-        print("Message sent successfully!")
-        print(f"(Status code: {response.status_code})")
+        return message
 
-    _retrieve_metadata = retrieve_metadata()
-    _calculate_metrics = calculate_metrics(_retrieve_metadata)
-    _calculate_throughput = calculate_throughput(_calculate_metrics)
-    _threshold_check = threshold_check(_calculate_metrics, _calculate_throughput)
-    telegram_alert(_threshold_check)
+    _threshold_message = threshold_check(_calculate_metrics, _calculate_throughput)
 
-    test_connection() >> _retrieve_metadata
+    trigger_alert = TriggerDagRunOperator(
+        task_id="trigger_telegram_alert",
+        trigger_dag_id="telegram_bot_alert",
+        conf={"triggerer": "kafka_healthcheck", "message": _threshold_message},
+        # trigger_rule="all_done",
+        wait_for_completion=False,
+        poke_interval=10,
+    )
+
+    (
+        test_connection()
+        >> _retrieve_metadata
+        >> _calculate_metrics
+        >> _calculate_throughput
+        >> _threshold_message
+        >> trigger_alert
+    )
 
 
 kafka_healthcheck()

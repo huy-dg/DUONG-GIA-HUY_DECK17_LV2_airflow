@@ -9,8 +9,7 @@ import html
 
 @dag(
     dag_id="telegram_bot_alert",
-    start_date=datetime(2025, 1, 1),
-    schedule_interval="@daily",
+    schedule=None,
     catchup=False,
     tags=["alert", "telegram"],
 )
@@ -26,15 +25,15 @@ def telegram_bot_alert():
         safe_json = html.escape(message)
         print(f"{triggerer} - {message}")
         print(f"{type(triggerer)} - {type(message)}")
+
         conn = BaseHook.get_connection("telegram_bot")
         payload = conn.get_extra_dejson()
-
         text_content = (
             f"🚀 <b>AIRFLOW CLUSTER REPORT</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
             f"📅 <b>Time:</b> <code>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</code>\n"
             f"🏷 <b>Task:</b> <i>Health Check Status</i>\n"
-            f"👤 <b>Triggerer:</b> \n\n<b><u>{conf.get('triggerer', 'Manual').split('_')[0].upper()}</u></b>\n\n"
+            f"👤 <b>Triggerer: {triggerer.upper()}</b>\n"
             f"📊 <b>Cluster Detail:</b>\n"
             f"<pre>{safe_json}</pre>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
@@ -48,8 +47,8 @@ def telegram_bot_alert():
         )
         print(f"Connection established: {response.status_code}")
         response.raise_for_status()
+
         print("Message sent successfully!")
-        print(f"(Status code: {response.status_code})")
 
     send_message()
 
