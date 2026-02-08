@@ -103,37 +103,6 @@ def spark_healthcheck():
 
     _cluster_metadata = get_cluster_metadata()
 
-    # # 3. Check Data Freshness trong Postgres
-    # # Kiểm tra xem có bản ghi nào mới được tạo trong X giờ qua không
-    # # Trả về True nếu có dữ liệu (Success), False nếu không (sẽ retry/fail)
-    # check_data_freshness = SqlSensor(
-    #     task_id="check_postgres_data_freshness",
-    #     conn_id="postgres_dw",
-    #     sql=f"""
-    #         SELECT 1
-    #         FROM {TARGET_TABLE}
-    #         WHERE updated_at >= NOW() - INTERVAL '{FRESHNESS_THRESHOLD_HOURS} HOURS'
-    #         LIMIT 1;
-    #     """,
-    #     poke_interval=60,  # Check mỗi 60s
-    #     timeout=60 * 5,  # Timeout sau 5 phút nếu data chưa về
-    #     mode="reschedule",  # Giải phóng worker slot khi chờ đợi
-    # )
-
-    # # 4. (Optional) Check Data Quality cơ bản
-    # # Ví dụ: Không được phép có giá trị null ở cột quan trọng
-    # check_data_quality = SqlSensor(
-    #     task_id="check_null_values",
-    #     conn_id="postgres_dw",
-    #     sql=f"""
-    #         SELECT 1 AS status
-    #         HAVING (SELECT COUNT(*) FROM {TARGET_TABLE} WHERE transaction_id IS NULL) = 0;
-    #     """,
-    #     fail_on_empty=True,  # Fail nếu query trả về rỗng (nghĩa là có NULL)
-    #     poke_interval=60,
-    #     timeout=120,
-    # )
-
     @task(task_id="gate_check")
     def gate_check(cluster_metadata):
         manager_nodes = cluster_metadata["manager_nodes"]
